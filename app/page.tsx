@@ -101,7 +101,7 @@ const TicketItem = ({ ticket, isSelected, onSelect }) => {
         </div>
       </div>
       <p className="text-lg font-medium mt-1 text-gray-900 truncate">
-        {ticket.meal}
+        {ticket.recipe.meal}
       </p>
       <p className="text-xs text-gray-500 mt-1">Received at {timeString}</p>
     </div>
@@ -148,7 +148,7 @@ const RecipeDetail = ({ order, onUpdateStatus }) => {
           Preparation Steps:
         </h3>
         <ol className="space-y-4">
-          {order.steps.map((step, index) => (
+          {order.recipe.steps.map((step, index) => (
             <li key={index} className="flex items-start">
               <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-blue-500 text-white font-bold rounded-full mr-3 text-sm shadow-md">
                 {index + 1}
@@ -222,10 +222,13 @@ export default function App() {
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log("data:", data);
-        if (data.ok && data.recipe) {
-          const newTicket = createNewTicket(orders, data.recipe);
-          setOrders((prevOrders) => [newTicket, ...prevOrders]);
+        //console.log("data:", data);
+        console.log("meal: ", data.meal);
+        if (data && data.meal) {
+          const newTicket = createNewTicket(orders, data);
+          console.log("newTicket: ", newTicket);
+          setOrders((prevOrders) => [...prevOrders, newTicket]);
+          console.log("orders: ", orders);
           setSelectedOrderId(newTicket.id);
         }
       } catch (err) {
@@ -239,7 +242,7 @@ export default function App() {
     };
 
     return () => eventSource.close();
-  }, [orders]);
+  }, []);
 
   const pendingOrders = useMemo(
     () => orders.filter((o) => o.status === "pending"),
@@ -251,7 +254,7 @@ export default function App() {
   );
   const completedOrders = useMemo(
     () => orders.filter((o) => o.status === "completed"),
-    [orders],
+    [],
   );
 
   return (
@@ -260,7 +263,7 @@ export default function App() {
       <header className="flex justify-between items-center mb-6 pb-4 border-b border-gray-300">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 flex items-center">
           <ChefHat size={36} className="text-blue-600 mr-3" />
-          The Chef's Pass Dashboard
+          Oi, panini head! ...
         </h1>
         <p className="text-sm text-gray-500">Listening for new orders...</p>
       </header>
@@ -327,7 +330,7 @@ export default function App() {
         <div className="mt-6 p-4 bg-white rounded-xl shadow-lg">
           <h3 className="text-lg font-bold text-gray-700 flex items-center">
             <ListChecks size={20} className="mr-2 text-green-500" />
-            Completed Orders ({completedOrders.length})
+            Completed Orders ({completedOrders.length}).
           </h3>
           <div className="flex flex-wrap gap-2 mt-2">
             {completedOrders.map((order) => (

@@ -12,11 +12,13 @@
     "angular": "^1.8.3",
     "lucide-react": "^0.554.0",
     "next": "16.0.4",
+    "nvm": "^0.0.4",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
   "devDependencies": {
     "@angular/language-server": "^21.0.1",
+    "@angular/language-service": "^21.0.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
